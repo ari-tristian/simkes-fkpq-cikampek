@@ -509,9 +509,12 @@
 
     // SUBMIT FINAL TO backend
     async function submitFinalPengajuan() {
+      // VALIDASI DILONGGARKAN: Hanya memberikan peringatan konfirmasi jika jumlah tidak sesuai kuota
       if(guruList.length !== currentLembaga.kuota2027) {
-        alert(`Jumlah guru (${guruList.length}) belum sesuai dengan target kuota 2027 (${currentLembaga.kuota2027} orang). Silakan sesuaikan terlebih dahulu!`);
-        return;
+        const konfirmasi = confirm(
+          `Perhatian: Jumlah guru saat ini (${guruList.length} orang) tidak sama dengan target kuota 2027 (${currentLembaga.kuota2027} orang).\n\nApakah Anda tetap ingin mengirimkan pengajuan ini agar penambahan guru baru diinput oleh Operator FKPQ Kecamatan?`
+        );
+        if(!konfirmasi) return;
       }
 
       if(!document.getElementById('checkPernyataan').checked) {
