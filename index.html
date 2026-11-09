@@ -351,9 +351,20 @@
       document.getElementById('dashNamaLembaga').innerText = currentLembaga.nama;
       document.getElementById('dashIdLembaga').innerText = "ID: " + currentLembaga.id;
 
-      // Parsing Angka Kuota secara pasti
-      const k2026 = parseInt(currentLembaga.kuota2026, 10) || 0;
-      const k2027 = parseInt(currentLembaga.kuota2027, 10) || 0;
+      // Pembersihan dan parsing nilai kuota secara ketat (menghilangkan karakter non-digit)
+      const parseNum = (val) => {
+        if (typeof val === 'number') return Math.floor(val);
+        const cleaned = String(val || "").replace(/[^0-9]/g, '');
+        const parsed = parseInt(cleaned, 10);
+        return isNaN(parsed) ? 0 : parsed;
+      };
+
+      const k2026 = parseNum(currentLembaga.kuota2026);
+      const k2027 = parseNum(currentLembaga.kuota2027);
+
+      // Simpan kembali kuota numerik ke object state lembaga
+      currentLembaga.kuota2026 = k2026;
+      currentLembaga.kuota2027 = k2027;
 
       document.getElementById('dashKuota2026').innerText = k2026 + " Orang";
       document.getElementById('dashKuota2027').innerText = k2027 + " Orang";
