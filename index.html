@@ -300,8 +300,8 @@
     // HANDLE LOGIN / VERIFIKASI LEMBAGA
     async function handleLogin(e) {
       e.preventDefault();
-      const idLembaga = document.getElementById('selectLembaga').value;
-      const passcode = document.getElementById('inputPasscode').value;
+      const idLembaga = document.getElementById('selectLembaga').value.trim();
+      const passcode = document.getElementById('inputPasscode').value.trim();
 
       if(!GAS_URL || GAS_URL.includes("YOUR_DEPLOYED_GAS_WEBAPP_ID_HERE")) {
         alert("Harap atur URL Web App GAS terlebih dahulu pada variabel GAS_URL di file index.html!");
@@ -314,7 +314,7 @@
       lucide.createIcons();
 
       try {
-        const res = await fetch(`${GAS_URL}?action=getInitialData&idLembaga=${idLembaga}&passcode=${passcode}`);
+        const res = await fetch(`${GAS_URL}?action=getInitialData&idLembaga=${encodeURIComponent(idLembaga)}&passcode=${encodeURIComponent(passcode)}`);
         const result = await res.json();
 
         btn.disabled = false;
@@ -350,12 +350,17 @@
 
       document.getElementById('dashNamaLembaga').innerText = currentLembaga.nama;
       document.getElementById('dashIdLembaga').innerText = "ID: " + currentLembaga.id;
-      document.getElementById('dashKuota2026').innerText = currentLembaga.kuota2026 + " Orang";
-      document.getElementById('dashKuota2027').innerText = currentLembaga.kuota2027 + " Orang";
+
+      // Parsing Angka Kuota secara pasti
+      const k2026 = parseInt(currentLembaga.kuota2026, 10) || 0;
+      const k2027 = parseInt(currentLembaga.kuota2027, 10) || 0;
+
+      document.getElementById('dashKuota2026').innerText = k2026 + " Orang";
+      document.getElementById('dashKuota2027').innerText = k2027 + " Orang";
 
       // Badge Kuota Stat
       const badge = document.getElementById('dashStatusKuotaBadge');
-      const diff = currentLembaga.kuota2027 - currentLembaga.kuota2026;
+      const diff = k2027 - k2026;
       if(diff === 0) {
         badge.className = "text-xs font-semibold px-2 py-1 rounded bg-slate-200 text-slate-700";
         badge.innerText = "Kuota Tetap";
