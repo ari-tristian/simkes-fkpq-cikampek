@@ -264,10 +264,10 @@
 
   <script>
     // APP STATE MANAGEMENT
-    // Tempelkan URL Web App GAS hasil Deploy Anda di bawah ini
     const GAS_URL = "https://script.google.com/macros/s/AKfycbx8FizhWaXT0qAkJLcpi2ecwMnoRr4a48XkxHJxrguYeYfRVRqiqDKGYmPJ6SJBHkrj/exec";
     
     let currentLembaga = null;
+    let currentPasscode = "";
     let guruList = [];
 
     // INIT APP
@@ -322,6 +322,7 @@
 
         if(result.status === "SUCCESS") {
           currentLembaga = result.lembaga;
+          currentPasscode = passcode; // Simpan passcode untuk verifikasi request POST
           guruList = result.guru2026;
           
           if(result.alreadySubmitted) {
@@ -351,7 +352,6 @@
       document.getElementById('dashNamaLembaga').innerText = currentLembaga.nama;
       document.getElementById('dashIdLembaga').innerText = "ID: " + currentLembaga.id;
 
-      // Pembersihan dan parsing nilai kuota secara ketat (menghilangkan karakter non-digit)
       const parseNum = (val) => {
         if (typeof val === 'number') return Math.floor(val);
         const cleaned = String(val || "").replace(/[^0-9]/g, '');
@@ -362,14 +362,12 @@
       const k2026 = parseNum(currentLembaga.kuota2026);
       const k2027 = parseNum(currentLembaga.kuota2027);
 
-      // Simpan kembali kuota numerik ke object state lembaga
       currentLembaga.kuota2026 = k2026;
       currentLembaga.kuota2027 = k2027;
 
       document.getElementById('dashKuota2026').innerText = k2026 + " Orang";
       document.getElementById('dashKuota2027').innerText = k2027 + " Orang";
 
-      // Badge Kuota Stat
       const badge = document.getElementById('dashStatusKuotaBadge');
       const diff = k2027 - k2026;
       if(diff === 0) {
@@ -474,19 +472,19 @@
       
       const data = {
         idLembaga: currentLembaga.id,
-        nik: document.getElementById('guruNik').value,
-        namaLengkap: document.getElementById('guruNama').value,
-        tempatLahir: document.getElementById('guruTempatLahir').value,
+        nik: document.getElementById('guruNik').value.trim(),
+        namaLengkap: document.getElementById('guruNama').value.trim(),
+        tempatLahir: document.getElementById('guruTempatLahir').value.trim(),
         tanggalLahir: document.getElementById('guruTanggalLahir').value,
-        alamat: document.getElementById('guruAlamat').value,
-        rt: document.getElementById('guruRt').value,
-        rw: document.getElementById('guruRw').value,
-        kelurahan: document.getElementById('guruKelurahan').value,
+        alamat: document.getElementById('guruAlamat').value.trim(),
+        rt: document.getElementById('guruRt').value.trim(),
+        rw: document.getElementById('guruRw').value.trim(),
+        kelurahan: document.getElementById('guruKelurahan').value.trim(),
         kecamatan: "Cikampek",
-        kodePos: document.getElementById('guruKodePos').value,
-        namaIbuKandung: document.getElementById('guruIbuKandung').value,
+        kodePos: document.getElementById('guruKodePos').value.trim(),
+        namaIbuKandung: document.getElementById('guruIbuKandung').value.trim(),
         tempatMengajar: currentLembaga.nama,
-        alamatLembaga: document.getElementById('guruAlamatLembaga').value,
+        alamatLembaga: document.getElementById('guruAlamatLembaga').value.trim(),
         statusData: idx === -1 ? "BARU" : "EDIT"
       };
 
@@ -507,9 +505,8 @@
       }
     }
 
-    // SUBMIT FINAL TO backend
+    // SUBMIT FINAL TO BACKEND WITH SECURED PAYLOAD
     async function submitFinalPengajuan() {
-      // VALIDASI DILONGGARKAN: Hanya memberikan peringatan konfirmasi jika jumlah tidak sesuai kuota
       if(guruList.length !== currentLembaga.kuota2027) {
         const konfirmasi = confirm(
           `Perhatian: Jumlah guru saat ini (${guruList.length} orang) tidak sama dengan target kuota 2027 (${currentLembaga.kuota2027} orang).\n\nApakah Anda tetap ingin mengirimkan pengajuan ini agar penambahan guru baru diinput oleh Operator FKPQ Kecamatan?`
@@ -531,6 +528,7 @@
         action: "submitPengajuan2027",
         payload: {
           idLembaga: currentLembaga.id,
+          passcode: currentPasscode, // Ikutkan passcode untuk verifikasi server
           namaLembaga: currentLembaga.nama,
           listGuru: guruList
         }
@@ -566,6 +564,7 @@
 
     function logout() {
       currentLembaga = null;
+      currentPasscode = "";
       guruList = [];
       document.getElementById('viewDashboard').classList.add('hidden');
       document.getElementById('userInfo').classList.add('hidden');
