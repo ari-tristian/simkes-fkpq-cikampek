@@ -1,112 +1,194 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-slate-50">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengajuan Insentif HONDA 2027 - FKPQ Kecamatan Cikampek</title>
-  <!-- Tailwind CSS CDN -->
+  
+  <!-- CDN Tailwind CSS Standard tanpa SRI Blocker -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Fallback CSS jika Tailwind lambat dimuat */
+    body { background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
+    .hidden { display: none !important; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="flex flex-col min-h-screen bg-slate-100 text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP DECORATIVE BAR -->
+  <div class="h-1.5 w-full bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-400"></div>
 
   <!-- HEADER / NAVBAR -->
-  <header class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <div class="bg-white p-2 rounded-full text-emerald-700">
-          <i data-lucide="book-open-check" class="w-6 h-6"></i>
+  <header class="bg-white border-b border-slate-200/80 shadow-xs sticky top-0 z-40 backdrop-blur-md bg-white/95">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl shadow-md shadow-emerald-600/20 flex items-center justify-center ring-4 ring-emerald-50">
+          <i data-lucide="book-open-check" class="w-5 h-5"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">FKPQ Kecamatan Cikampek</h1>
-          <p class="text-xs text-emerald-100">Sistem Pengajuan Insentif HONDA TA 2027</p>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight tracking-tight">FKPQ Kecamatan Cikampek</h1>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">TA 2027</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">Sistem Verifikasi & Pengajuan Insentif HONDA</p>
         </div>
       </div>
-      <div id="userInfo" class="hidden flex items-center space-x-3">
-        <span id="userLembagaBadge" class="bg-emerald-800 px-3 py-1 rounded-full text-xs font-semibold"></span>
-        <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">Keluar</button>
+
+      <div id="userInfo" class="hidden items-center space-x-3">
+        <div class="hidden sm:flex items-center space-x-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg">
+          <i data-lucide="building-2" class="w-4 h-4 text-emerald-600"></i>
+          <span id="userLembagaBadge" class="text-xs font-semibold text-slate-700"></span>
+        </div>
+        <button onclick="logout()" class="inline-flex items-center space-x-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-medium px-3.5 py-1.5 rounded-lg transition-all duration-150">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Keluar</span>
+        </button>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- VIEW 1: AUTHENTICATION / LOGIN -->
-    <section id="viewLogin" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden my-8">
-      <div class="bg-emerald-800 p-6 text-white text-center">
-        <i data-lucide="shield-check" class="w-12 h-12 mx-auto mb-2 text-emerald-300"></i>
-        <h2 class="text-xl font-bold">Verifikasi Lembaga</h2>
-        <p class="text-xs text-emerald-100 mt-1">Pilih lembaga dan masukkan passcode untuk mengelola data insentif 2027.</p>
+    <section id="viewLogin" class="max-w-md mx-auto my-6 sm:my-12">
+      <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden transition-all">
+        <div class="bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 p-8 text-white text-center relative overflow-hidden">
+          <div class="w-14 h-14 bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+            <i data-lucide="shield-check" class="w-7 h-7 text-emerald-300"></i>
+          </div>
+          <h2 class="text-xl font-bold tracking-tight">Otentikasi Lembaga</h2>
+          <p class="text-xs text-emerald-100 mt-1.5 max-w-xs mx-auto font-normal leading-relaxed">Silakan pilih nama TPQ/MDTA dan masukkan PIN resmi untuk mengakses portal pengajuan.</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)" class="p-6 sm:p-8 space-y-5">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Nama Lembaga</label>
+            <div class="relative">
+              <select id="selectLembaga" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-all appearance-none cursor-pointer">
+                <option value="">-- Pilih Lembaga Pengusul --</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Passcode / PIN Lembaga</label>
+            <div class="relative">
+              <input type="password" id="inputPasscode" required placeholder="Masukkan 6 digit Passcode" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-all">
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
+                <i data-lucide="key-round" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btnLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3.5 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-emerald-600/25 flex justify-center items-center space-x-2 mt-2">
+            <span>Masuk ke Dashboard</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
       </div>
-      <form onsubmit="handleLogin(event)" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lembaga (TPQ/MDTA)</label>
-          <select id="selectLembaga" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            <option value="">-- Pilih Lembaga --</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Passcode / PIN Lembaga</label>
-          <input type="password" id="inputPasscode" required placeholder="Masukkan PIN 6 Digit" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-        </div>
-        <button type="submit" id="btnLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg text-sm transition duration-150 flex justify-center items-center">
-          <span>Masuk Aplikasi</span>
-        </button>
-      </form>
+
+      <div class="text-center mt-6">
+        <p class="text-xs text-slate-400 flex items-center justify-center space-x-1">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>FKPQ Kecamatan Cikampek Copyright 2026.</span>
+        </p>
+      </div>
     </section>
 
     <!-- VIEW 2: DASHBOARD & MANAGEMENT GURU -->
     <section id="viewDashboard" class="hidden space-y-6">
 
       <!-- ALERT RESUBMIT STATUS IF SUBMITTED -->
-      <div id="alertSubmitted" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
-        <div class="flex items-start">
-          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5"></i>
+      <div id="alertSubmitted" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-2xl shadow-xs">
+        <div class="flex items-start space-x-3.5">
+          <div class="p-2 bg-amber-100 text-amber-700 rounded-xl flex-shrink-0 mt-0.5">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
           <div>
-            <h3 class="font-bold text-amber-800 text-sm">Lembaga Anda Sudah Melakukan Submit!</h3>
-            <p class="text-xs text-amber-700 mt-0.5">Data pengajuan telah tersimpan. Anda masih dapat melakukan revisi/perubahan data di bawah ini dan mengunggah ulang sebelum batas waktu berakhir.</p>
+            <h3 class="font-bold text-amber-900 text-sm">Status: Pengajuan Sudah Pernah Dikirim</h3>
+            <p class="text-xs text-amber-700 mt-1 leading-relaxed">Data pengajuan lembaga Anda telah tersimpan di basis data kecamatan. Apabila terdapat perbaikan data guru, Anda masih dapat memperbarui data di bawah ini dan menekan tombol <strong>Submit Pengajuan 2027</strong> kembali.</p>
           </div>
         </div>
       </div>
 
-      <!-- KUOTA SUMMARY CARD -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="md:col-span-2">
-          <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Identitas Pengusul</span>
-          <h2 id="dashNamaLembaga" class="text-xl font-bold text-slate-800"></h2>
-          <p id="dashIdLembaga" class="text-xs text-slate-500"></p>
-        </div>
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center justify-between">
+      <!-- HEADER CARDS & KUOTA SUMMARY -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- IDENTITAS LEMBAGA CARD -->
+        <div class="lg:col-span-6 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <p class="text-xs text-slate-500">Kuota 2026</p>
-            <p id="dashKuota2026" class="text-lg font-bold text-slate-700">0</p>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 tracking-wide uppercase">Identitas Pengusul</span>
+              <span id="dashIdLembaga" class="text-xs text-slate-400 font-mono font-medium"></span>
+            </div>
+            <h2 id="dashNamaLembaga" class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug"></h2>
           </div>
-          <i data-lucide="users" class="w-6 h-6 text-slate-400"></i>
+          <div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs text-slate-500 space-x-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Wilayah Kerja: Kecamatan Cikampek, Kab. Karawang</span>
+          </div>
         </div>
-        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 flex items-center justify-between">
-          <div>
-            <p class="text-xs text-emerald-700 font-medium">Kuota Target 2027</p>
-            <p id="dashKuota2027" class="text-lg font-bold text-emerald-700">0</p>
+
+        <!-- KUOTA 2026 CARD -->
+        <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Kuota Realisasi 2026</span>
+            <div class="p-2 bg-slate-100 text-slate-500 rounded-xl">
+              <i data-lucide="users" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="dashStatusKuotaBadge" class="text-xs font-semibold px-2 py-1 rounded"></div>
+          <div class="mt-4">
+            <p id="dashKuota2026" class="text-3xl font-extrabold text-slate-800 tracking-tight">0</p>
+            <p class="text-xs text-slate-400 mt-1">Penerima insentif tahun lalu</p>
+          </div>
+        </div>
+
+        <!-- KUOTA TARGET 2027 CARD -->
+        <div class="lg:col-span-3 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl shadow-md p-5 text-white flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between z-10">
+            <span class="text-xs font-semibold text-emerald-100 uppercase tracking-wider">Kuota Target 2027</span>
+            <div id="dashStatusKuotaBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white/20 backdrop-blur-md text-white border border-white/20"></div>
+          </div>
+          <div class="mt-4 z-10">
+            <p id="dashKuota2027" class="text-3xl font-extrabold text-white tracking-tight">0</p>
+            <p class="text-xs text-emerald-100/80 mt-1">Alokasi kuota usulan tahun 2027</p>
+          </div>
         </div>
       </div>
 
-      <!-- ACTION BAR & INSTRUCTIONS -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+      <!-- MAIN DATA PANEL -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        
+        <!-- PANEL HEADER & CONTROL BAR -->
+        <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
           <div>
-            <h3 class="font-bold text-slate-800 text-base">Daftar Guru Pengajuan Insentif 2027</h3>
-            <p id="kuotaStatusMsg" class="text-xs text-slate-500 mt-1"></p>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h3 class="font-bold text-slate-900 text-base sm:text-lg">Daftar Guru Pengajuan Insentif 2027</h3>
+              <button onclick="togglePiiMask()" class="inline-flex items-center space-x-1.5 text-xs text-slate-600 hover:text-emerald-700 bg-white hover:bg-emerald-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-emerald-200 transition-all font-medium">
+                <i data-lucide="eye" id="iconEyePii" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span id="textTogglePii">Tampilkan Data PII</span>
+              </button>
+            </div>
+            <p id="kuotaStatusMsg" class="text-xs font-medium mt-1.5"></p>
           </div>
-          <div class="flex space-x-2 w-full md:w-auto">
-            <button id="btnAddGuru" onclick="openModalGuru()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-medium flex items-center justify-center space-x-1">
+
+          <div class="flex items-center space-x-3">
+            <button id="btnAddGuru" onclick="openModalGuru()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition-all duration-150 flex items-center justify-center space-x-2 shadow-sm">
               <i data-lucide="user-plus" class="w-4 h-4"></i>
               <span>Tambah Guru Baru</span>
             </button>
@@ -114,32 +196,35 @@
         </div>
 
         <!-- TABLE DATA GURU -->
-        <div class="overflow-x-auto rounded-lg border border-slate-200">
-          <table class="w-full text-left text-xs text-slate-600">
-            <thead class="bg-slate-100 text-slate-700 font-semibold uppercase text-[11px] tracking-wider border-b">
-              <tr>
-                <th class="p-3">No</th>
-                <th class="p-3">NIK</th>
-                <th class="p-3">Nama Lengkap</th>
-                <th class="p-3">Tempat, Tgl Lahir</th>
-                <th class="p-3">Ibu Kandung</th>
-                <th class="p-3">Status Data</th>
-                <th class="p-3 text-center">Aksi</th>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] border-b border-slate-200">
+                <th class="py-3.5 px-4 w-12 text-center">No</th>
+                <th class="py-3.5 px-4 font-mono">NIK</th>
+                <th class="py-3.5 px-4">Nama Lengkap</th>
+                <th class="py-3.5 px-4">Tempat, Tgl Lahir</th>
+                <th class="py-3.5 px-4">Ibu Kandung</th>
+                <th class="py-3.5 px-4 text-center">Status Data</th>
+                <th class="py-3.5 px-4 text-center w-24">Aksi</th>
               </tr>
             </thead>
-            <tbody id="tableGuruBody" class="divide-y divide-slate-200">
-              <!-- Render via JavaScript -->
+            <tbody id="tableGuruBody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamic Rows Rendered by JS -->
             </tbody>
           </table>
         </div>
 
-        <!-- SUBMIT FINAL FOOTER -->
-        <div class="mt-6 border-t border-slate-100 pt-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div class="flex items-center space-x-2">
-            <input type="checkbox" id="checkPernyataan" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-            <label for="checkPernyataan" class="text-xs text-slate-600">Saya menyatakan bahwa data guru di atas adalah benar dan sesuai kondisi riil lembaga.</label>
-          </div>
-          <button onclick="submitFinalPengajuan()" id="btnSubmitFinal" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-xs transition duration-150 flex items-center justify-center space-x-2 shadow-md">
+        <!-- TABLE FOOTER & ACTION SUBMIT -->
+        <div class="p-5 sm:p-6 bg-slate-50 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+          <label class="flex items-start space-x-3 cursor-pointer group">
+            <input type="checkbox" id="checkPernyataan" class="mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0 w-4 h-4 cursor-pointer">
+            <span class="text-xs text-slate-600 group-hover:text-slate-900 transition-colors leading-relaxed">
+              Saya menyatakan bahwa seluruh data guru pengajuan di atas adalah benar, valid, dan sesuai dengan kondisi riil lembaga.
+            </span>
+          </label>
+
+          <button onclick="submitFinalPengajuan()" id="btnSubmitFinal" class="w-full md:w-auto min-w-[200px] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold px-6 py-3 rounded-xl text-xs transition-all duration-200 flex items-center justify-center space-x-2 shadow-md">
             <i data-lucide="send" class="w-4 h-4"></i>
             <span>Submit Pengajuan 2027</span>
           </button>
@@ -149,147 +234,178 @@
 
   </main>
 
-  <!-- MODAL FORM EDIT / TAMBAH GURU (13 ATRIBUT) -->
-  <div id="modalGuru" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex justify-center items-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-100">
-      <div class="bg-slate-800 p-4 text-white flex justify-between items-center sticky top-0 z-10">
-        <h3 id="modalGuruTitle" class="font-bold text-sm flex items-center space-x-2">
-          <i data-lucide="user-edit" class="w-4 h-4 text-emerald-400"></i>
-          <span>Form Data Guru Insentif</span>
-        </h3>
-        <button onclick="closeModalGuru()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <!-- MODAL FORM EDIT / TAMBAH GURU -->
+  <div id="modalGuru" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-center items-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-100">
+      
+      <!-- MODAL HEADER -->
+      <div class="bg-slate-900 p-5 text-white flex justify-between items-center shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl">
+            <i data-lucide="user-cog" class="w-5 h-5"></i>
+          </div>
+          <h3 id="modalGuruTitle" class="font-bold text-sm tracking-tight text-white">Form Data Guru</h3>
+        </div>
+        <button onclick="closeModalGuru()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       
-      <form onsubmit="saveGuruForm(event)" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- MODAL BODY FORM -->
+      <form onsubmit="saveGuruForm(event)" class="p-6 overflow-y-auto flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
         <input type="hidden" id="guruFormIndex" value="-1">
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">1. NIK (16 Digit)</label>
-          <input type="text" id="guruNik" maxlength="16" pattern="\d{16}" required placeholder="321501xxxxxxxxxx" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">1. NIK (16 Digit)</label>
+          <input type="text" id="guruNik" maxlength="16" pattern="\d{16}" required placeholder="321501xxxxxxxxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">2. Nama Lengkap (beserta Gelar)</label>
-          <input type="text" id="guruNama" required placeholder="Contoh: Ahmad, S.Pd.I" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">2. Nama Lengkap (beserta Gelar)</label>
+          <input type="text" id="guruNama" required placeholder="Contoh: Ahmad, S.Pd.I" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">3. Tempat Lahir</label>
-          <input type="text" id="guruTempatLahir" required placeholder="Karawang" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">3. Tempat Lahir</label>
+          <input type="text" id="guruTempatLahir" required placeholder="Karawang" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">4. Tanggal Lahir</label>
-          <input type="date" id="guruTanggalLahir" required class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">4. Tanggal Lahir</label>
+          <input type="date" id="guruTanggalLahir" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div class="md:col-span-2">
-          <label class="block text-xs font-semibold text-slate-700 mb-1">5. Alamat Tempat Tinggal</label>
-          <input type="text" id="guruAlamat" required placeholder="Dusun / Jl. No..." class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="md:col-span-2 space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">5. Alamat Tempat Tinggal</label>
+          <input type="text" id="guruAlamat" required placeholder="Dusun / Kampung / Jl..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">6. RT</label>
-          <input type="text" id="guruRt" maxlength="3" required placeholder="001" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">6. RT</label>
+          <input type="text" id="guruRt" maxlength="3" required placeholder="001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">7. RW</label>
-          <input type="text" id="guruRw" maxlength="3" required placeholder="002" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">7. RW</label>
+          <input type="text" id="guruRw" maxlength="3" required placeholder="002" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">8. Kelurahan / Desa</label>
-          <input type="text" id="guruKelurahan" required placeholder="Cikampek Kota" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">8. Kelurahan / Desa</label>
+          <input type="text" id="guruKelurahan" required placeholder="Cikampek Kota" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">9. Kecamatan</label>
-          <input type="text" id="guruKecamatan" value="Cikampek" readonly class="w-full border border-slate-200 bg-slate-100 rounded p-2 text-xs text-slate-600">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">9. Kecamatan</label>
+          <input type="text" id="guruKecamatan" value="Cikampek" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-500 cursor-not-allowed">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">10. Kode Pos</label>
-          <input type="text" id="guruKodePos" maxlength="5" pattern="\d{5}" required placeholder="41373" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">10. Kode Pos</label>
+          <input type="text" id="guruKodePos" maxlength="5" pattern="\d{5}" required placeholder="41373" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">11. Nama Ibu Kandung</label>
-          <input type="text" id="guruIbuKandung" required placeholder="Nama Ibu Kandung" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">11. Nama Ibu Kandung</label>
+          <input type="text" id="guruIbuKandung" required placeholder="Nama Ibu Kandung" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">12. Tempat Mengajar</label>
-          <input type="text" id="guruTempatMengajar" readonly class="w-full border border-slate-200 bg-slate-100 rounded p-2 text-xs text-slate-600">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">12. Tempat Mengajar</label>
+          <input type="text" id="guruTempatMengajar" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-500 cursor-not-allowed">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">13. Alamat Lembaga</label>
-          <input type="text" id="guruAlamatLembaga" placeholder="Alamat lengkap lembaga" required class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        <div class="md:col-span-2 space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">13. Alamat Lembaga</label>
+          <input type="text" id="guruAlamatLembaga" placeholder="Alamat lengkap lokasi lembaga" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div class="md:col-span-2 border-t border-slate-100 pt-4 flex justify-end space-x-2">
-          <button type="button" onclick="closeModalGuru()" class="px-4 py-2 text-xs border border-slate-300 rounded text-slate-600 hover:bg-slate-50">Batal</button>
-          <button type="submit" class="px-5 py-2 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded shadow-sm">Simpan Data Guru</button>
+        <div class="md:col-span-2 border-t border-slate-100 pt-4 mt-2 flex justify-end space-x-2">
+          <button type="button" onclick="closeModalGuru()" class="px-4 py-2.5 text-xs font-semibold border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition">Batal</button>
+          <button type="submit" class="px-5 py-2.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition">Simpan Data Guru</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL SUKSES & DOWNLOAD PDF -->
-  <div id="modalSuccess" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex justify-center items-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-4">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+  <!-- MODAL NOTIFIKASI SUKSES SUBMIT -->
+  <div id="modalSuccess" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-center items-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 text-center space-y-4 border border-slate-100">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
         <i data-lucide="check-circle-2" class="w-10 h-10"></i>
       </div>
-      <h3 class="text-xl font-bold text-slate-800">Pengajuan Berhasil!</h3>
-      <p class="text-xs text-slate-600">Data insentif HONDA TA 2027 telah tersimpan ke sistem FKPQ Kecamatan Cikampek. Silakan unduh Bukti Pengajuan berikut:</p>
+      <div>
+        <h3 class="text-xl font-extrabold text-slate-900">Pengajuan Berhasil Disimpan!</h3>
+        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Data pengajuan insentif HONDA TA 2027 telah sukses dikirim dan diverifikasi oleh sistem FKPQ Kecamatan Cikampek.</p>
+      </div>
       
-      <div class="pt-2 space-y-2">
-        <a id="linkDownloadPdf" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-xs flex justify-center items-center space-x-2 shadow">
-          <i data-lucide="file-down" class="w-4 h-4"></i>
-          <span>Unduh Bukti Pengajuan (PDF)</span>
-        </a>
-        <button onclick="closeModalSuccess()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg text-xs">Tutup</button>
+      <div class="pt-3">
+        <button onclick="closeModalSuccess()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl text-xs transition shadow-md">Selesai & Keluar</button>
       </div>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-white border-t border-slate-200 mt-auto py-4">
-    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
-      &copy; 2027 FKPQ Kecamatan Cikampek - Operator Kecamatan (Ari). Supported by Google Apps Script & GitHub Pages.
+  <footer class="bg-white border-t border-slate-200/80 mt-auto py-5">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-medium flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>&copy; 2027 FKPQ Kecamatan Cikampek. All rights reserved.</div>
+      <div class="flex items-center space-x-1">
+        <span>Sistem Informasi Pengajuan Insentif Guru Ngaji</span>
+      </div>
     </div>
   </footer>
 
   <script>
-    // APP STATE MANAGEMENT
     const GAS_URL = "https://script.google.com/macros/s/AKfycbx8FizhWaXT0qAkJLcpi2ecwMnoRr4a48XkxHJxrguYeYfRVRqiqDKGYmPJ6SJBHkrj/exec";
     
     let currentLembaga = null;
     let currentPasscode = "";
     let guruList = [];
+    let isPiiVisible = false;
 
-    // INIT APP
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       fetchLembagaList();
     });
 
-    // FETCH DAFTAR LEMBAGA (GET)
-    async function fetchLembagaList() {
-      if(!GAS_URL || GAS_URL.includes("YOUR_DEPLOYED_GAS_WEBAPP_ID_HERE")) {
-        console.warn("Harap masukkan URL Web App GAS yang valid di kode index.html!");
-        return;
+    function maskNik(nik) {
+      if (!nik || nik.length < 16) return nik;
+      return nik.substring(0, 6) + "******" + nik.substring(12);
+    }
+
+    function maskName(name) {
+      if (!name) return "";
+      const words = name.trim().split(" ");
+      return words.map(w => w.length > 1 ? w[0] + "*".repeat(w.length - 1) : w).join(" ");
+    }
+
+    function togglePiiMask() {
+      isPiiVisible = !isPiiVisible;
+      const textBtn = document.getElementById('textTogglePii');
+      const iconEye = document.getElementById('iconEyePii');
+
+      if (isPiiVisible) {
+        textBtn.textContent = "Sembunyikan PII";
+        iconEye.setAttribute('data-lucide', 'eye-off');
+      } else {
+        textBtn.textContent = "Tampilkan Data PII";
+        iconEye.setAttribute('data-lucide', 'eye');
       }
+      lucide.createIcons();
+      renderTableGuru();
+    }
+
+    async function fetchLembagaList() {
+      if(!GAS_URL || GAS_URL.includes("YOUR_DEPLOYED_GAS_WEBAPP_ID_HERE")) return;
       try {
         const res = await fetch(`${GAS_URL}?action=getLembagaList`);
         const result = await res.json();
         if(result.status === "SUCCESS") {
           const select = document.getElementById('selectLembaga');
-          select.innerHTML = '<option value="">-- Pilih Lembaga --</option>';
+          select.innerHTML = '<option value="">-- Pilih Lembaga Pengusul --</option>';
           result.data.forEach(item => {
-            select.innerHTML += `<option value="${item.id}">${item.nama}</option>`;
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = item.nama;
+            select.appendChild(opt);
           });
         }
       } catch (err) {
@@ -297,32 +413,26 @@
       }
     }
 
-    // HANDLE LOGIN / VERIFIKASI LEMBAGA
     async function handleLogin(e) {
       e.preventDefault();
       const idLembaga = document.getElementById('selectLembaga').value.trim();
       const passcode = document.getElementById('inputPasscode').value.trim();
 
-      if(!GAS_URL || GAS_URL.includes("YOUR_DEPLOYED_GAS_WEBAPP_ID_HERE")) {
-        alert("Harap atur URL Web App GAS terlebih dahulu pada variabel GAS_URL di file index.html!");
-        return;
-      }
-
       const btn = document.getElementById('btnLogin');
       btn.disabled = true;
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memverifikasi...`;
-      lucide.createIcons();
+      btn.innerHTML = `<span>Memverifikasi...</span>`;
 
       try {
         const res = await fetch(`${GAS_URL}?action=getInitialData&idLembaga=${encodeURIComponent(idLembaga)}&passcode=${encodeURIComponent(passcode)}`);
         const result = await res.json();
 
         btn.disabled = false;
-        btn.innerHTML = `Masuk Aplikasi`;
+        btn.innerHTML = `<span>Masuk ke Dashboard</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        lucide.createIcons();
 
         if(result.status === "SUCCESS") {
           currentLembaga = result.lembaga;
-          currentPasscode = passcode; // Simpan passcode untuk verifikasi request POST
+          currentPasscode = passcode;
           guruList = result.guru2026;
           
           if(result.alreadySubmitted) {
@@ -337,20 +447,21 @@
         }
       } catch(err) {
         btn.disabled = false;
-        btn.innerHTML = `Masuk Aplikasi`;
+        btn.innerHTML = `<span>Masuk ke Dashboard</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        lucide.createIcons();
         alert("Terjadi kesalahan koneksi ke backend GAS.");
       }
     }
 
-    // RENDER DASHBOARD & DATA
     function renderDashboard() {
       document.getElementById('viewLogin').classList.add('hidden');
       document.getElementById('viewDashboard').classList.remove('hidden');
       document.getElementById('userInfo').classList.remove('hidden');
-      document.getElementById('userLembagaBadge').innerText = currentLembaga.nama;
-
-      document.getElementById('dashNamaLembaga').innerText = currentLembaga.nama;
-      document.getElementById('dashIdLembaga').innerText = "ID: " + currentLembaga.id;
+      document.getElementById('userInfo').classList.add('flex');
+      
+      document.getElementById('userLembagaBadge').textContent = currentLembaga.nama;
+      document.getElementById('dashNamaLembaga').textContent = currentLembaga.nama;
+      document.getElementById('dashIdLembaga').textContent = "ID: " + currentLembaga.id;
 
       const parseNum = (val) => {
         if (typeof val === 'number') return Math.floor(val);
@@ -365,26 +476,22 @@
       currentLembaga.kuota2026 = k2026;
       currentLembaga.kuota2027 = k2027;
 
-      document.getElementById('dashKuota2026').innerText = k2026 + " Orang";
-      document.getElementById('dashKuota2027').innerText = k2027 + " Orang";
+      document.getElementById('dashKuota2026').textContent = k2026 + " Orang";
+      document.getElementById('dashKuota2027').textContent = k2027 + " Orang";
 
       const badge = document.getElementById('dashStatusKuotaBadge');
       const diff = k2027 - k2026;
       if(diff === 0) {
-        badge.className = "text-xs font-semibold px-2 py-1 rounded bg-slate-200 text-slate-700";
-        badge.innerText = "Kuota Tetap";
+        badge.textContent = "Kuota Tetap";
       } else if(diff > 0) {
-        badge.className = "text-xs font-semibold px-2 py-1 rounded bg-emerald-200 text-emerald-800";
-        badge.innerText = `Bertambah (+${diff})`;
+        badge.textContent = `Bertambah (+${diff})`;
       } else {
-        badge.className = "text-xs font-semibold px-2 py-1 rounded bg-amber-200 text-amber-800";
-        badge.innerText = `Berkurang (${diff})`;
+        badge.textContent = `Berkurang (${diff})`;
       }
 
       renderTableGuru();
     }
 
-    // RENDER TABEL GURU
     function renderTableGuru() {
       const tbody = document.getElementById('tableGuruBody');
       const kuotaStatusMsg = document.getElementById('kuotaStatusMsg');
@@ -392,46 +499,55 @@
 
       const selisih = guruList.length - currentLembaga.kuota2027;
       if (selisih === 0) {
-        kuotaStatusMsg.innerHTML = `<span class="text-emerald-600 font-semibold">✓ Jumlah guru pas dengan kuota 2027 (${currentLembaga.kuota2027} orang).</span>`;
+        kuotaStatusMsg.className = "text-xs text-emerald-600 font-semibold mt-1 flex items-center space-x-1";
+        kuotaStatusMsg.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5 inline"></i><span>Jumlah guru pas dengan kuota target 2027 (${currentLembaga.kuota2027} orang).</span>`;
       } else if (selisih < 0) {
-        kuotaStatusMsg.innerHTML = `<span class="text-amber-600 font-semibold">! Silakan tambahkan ${Math.abs(selisih)} guru baru untuk memenuhi kuota 2027.</span>`;
+        kuotaStatusMsg.className = "text-xs text-amber-600 font-semibold mt-1 flex items-center space-x-1";
+        kuotaStatusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5 inline"></i><span>Silakan tambahkan ${Math.abs(selisih)} guru baru untuk memenuhi kuota target 2027.</span>`;
       } else {
-        kuotaStatusMsg.innerHTML = `<span class="text-red-600 font-semibold">! Jumlah guru melebihi kuota 2027. Silakan hapus ${selisih} guru.</span>`;
+        kuotaStatusMsg.className = "text-xs text-red-600 font-semibold mt-1 flex items-center space-x-1";
+        kuotaStatusMsg.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 inline"></i><span>Jumlah guru melebihi kuota target 2027. Silakan hapus ${selisih} guru.</span>`;
       }
 
       guruList.forEach((guru, idx) => {
-        let badgeStatus = '<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px]">TETAP</span>';
-        if(guru.statusData === "BARU") badgeStatus = '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px]">BARU</span>';
-        if(guru.statusData === "EDIT") badgeStatus = '<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px]">DIEDIT</span>';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
 
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-medium">${idx + 1}</td>
-            <td class="p-3 font-mono">${guru.nik}</td>
-            <td class="p-3 font-semibold text-slate-800">${guru.namaLengkap}</td>
-            <td class="p-3">${guru.tempatLahir}, ${guru.tanggalLahir}</td>
-            <td class="p-3">${guru.namaIbuKandung}</td>
-            <td class="p-3">${badgeStatus}</td>
-            <td class="p-3 text-center">
-              <div class="flex justify-center space-x-1">
-                <button onclick="openModalGuru(${idx})" class="p-1 text-blue-600 hover:bg-blue-50 rounded" title="Edit Data"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                <button onclick="deleteGuru(${idx})" class="p-1 text-red-600 hover:bg-red-50 rounded" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-              </div>
-            </td>
-          </tr>
-        `;
+        let badgeClass = "bg-slate-100 text-slate-600 border border-slate-200";
+        let statusLabel = guru.statusData || "TETAP";
+        if(statusLabel === "BARU") badgeClass = "bg-emerald-50 text-emerald-700 border border-emerald-200";
+        if(statusLabel === "EDIT") badgeClass = "bg-blue-50 text-blue-700 border border-blue-200";
+
+        const displayNik = isPiiVisible ? guru.nik : maskNik(guru.nik);
+        const displayIbu = isPiiVisible ? guru.namaIbuKandung : maskName(guru.namaIbuKandung);
+
+        tr.innerHTML = DOMPurify.sanitize(`
+          <td class="py-3 px-4 text-center font-medium text-slate-400">${idx + 1}</td>
+          <td class="py-3 px-4 font-mono font-medium text-slate-800">${displayNik}</td>
+          <td class="py-3 px-4 font-semibold text-slate-900">${guru.namaLengkap}</td>
+          <td class="py-3 px-4 text-slate-600">${guru.tempatLahir}, ${guru.tanggalLahir}</td>
+          <td class="py-3 px-4 text-slate-600">${displayIbu}</td>
+          <td class="py-3 px-4 text-center"><span class="${badgeClass} px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider">${statusLabel}</span></td>
+          <td class="py-3 px-4 text-center">
+            <div class="flex justify-center items-center space-x-1">
+              <button onclick="openModalGuru(${idx})" class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit Data"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+              <button onclick="deleteGuru(${idx})" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+          </td>
+        `);
+
+        tbody.appendChild(tr);
       });
 
       lucide.createIcons();
     }
 
-    // MODAL FORM HANDLING
     function openModalGuru(index = -1) {
       document.getElementById('guruFormIndex').value = index;
       document.getElementById('guruTempatMengajar').value = currentLembaga.nama;
       
       if(index === -1) {
-        document.getElementById('modalGuruTitle').innerText = "Tambah Guru Baru (Kuota 2027)";
+        document.getElementById('modalGuruTitle').textContent = "Tambah Guru Baru (Kuota 2027)";
         document.getElementById('guruNik').value = "";
         document.getElementById('guruNama').value = "";
         document.getElementById('guruTempatLahir').value = "";
@@ -444,7 +560,7 @@
         document.getElementById('guruIbuKandung').value = "";
         document.getElementById('guruAlamatLembaga').value = guruList.length > 0 ? guruList[0].alamatLembaga : "";
       } else {
-        document.getElementById('modalGuruTitle').innerText = "Edit Data Guru";
+        document.getElementById('modalGuruTitle').textContent = "Edit Data Guru";
         const g = guruList[index];
         document.getElementById('guruNik').value = g.nik;
         document.getElementById('guruNama').value = g.namaLengkap;
@@ -472,19 +588,19 @@
       
       const data = {
         idLembaga: currentLembaga.id,
-        nik: document.getElementById('guruNik').value.trim(),
-        namaLengkap: document.getElementById('guruNama').value.trim(),
-        tempatLahir: document.getElementById('guruTempatLahir').value.trim(),
+        nik: DOMPurify.sanitize(document.getElementById('guruNik').value.trim()),
+        namaLengkap: DOMPurify.sanitize(document.getElementById('guruNama').value.trim()),
+        tempatLahir: DOMPurify.sanitize(document.getElementById('guruTempatLahir').value.trim()),
         tanggalLahir: document.getElementById('guruTanggalLahir').value,
-        alamat: document.getElementById('guruAlamat').value.trim(),
-        rt: document.getElementById('guruRt').value.trim(),
-        rw: document.getElementById('guruRw').value.trim(),
-        kelurahan: document.getElementById('guruKelurahan').value.trim(),
+        alamat: DOMPurify.sanitize(document.getElementById('guruAlamat').value.trim()),
+        rt: DOMPurify.sanitize(document.getElementById('guruRt').value.trim()),
+        rw: DOMPurify.sanitize(document.getElementById('guruRw').value.trim()),
+        kelurahan: DOMPurify.sanitize(document.getElementById('guruKelurahan').value.trim()),
         kecamatan: "Cikampek",
-        kodePos: document.getElementById('guruKodePos').value.trim(),
-        namaIbuKandung: document.getElementById('guruIbuKandung').value.trim(),
+        kodePos: DOMPurify.sanitize(document.getElementById('guruKodePos').value.trim()),
+        namaIbuKandung: DOMPurify.sanitize(document.getElementById('guruIbuKandung').value.trim()),
         tempatMengajar: currentLembaga.nama,
-        alamatLembaga: document.getElementById('guruAlamatLembaga').value.trim(),
+        alamatLembaga: DOMPurify.sanitize(document.getElementById('guruAlamatLembaga').value.trim()),
         statusData: idx === -1 ? "BARU" : "EDIT"
       };
 
@@ -499,13 +615,12 @@
     }
 
     function deleteGuru(index) {
-      if(confirm("Apakah Anda yakin ingin menghapus data guru ini dari pengajuan 2027?")) {
+      if(confirm("Apakah Anda yakin ingin menghapus data guru ini dari daftar pengajuan 2027?")) {
         guruList.splice(index, 1);
         renderTableGuru();
       }
     }
 
-    // SUBMIT FINAL TO BACKEND WITH SECURED PAYLOAD
     async function submitFinalPengajuan() {
       if(guruList.length !== currentLembaga.kuota2027) {
         const konfirmasi = confirm(
@@ -521,14 +636,13 @@
 
       const btn = document.getElementById('btnSubmitFinal');
       btn.disabled = true;
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...`;
-      lucide.createIcons();
+      btn.innerHTML = `<span>Menyimpan...</span>`;
 
       const payload = {
         action: "submitPengajuan2027",
         payload: {
           idLembaga: currentLembaga.id,
-          passcode: currentPasscode, // Ikutkan passcode untuk verifikasi server
+          passcode: currentPasscode,
           namaLembaga: currentLembaga.nama,
           listGuru: guruList
         }
@@ -542,17 +656,18 @@
         const result = await res.json();
 
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Submit Pengajuan 2027</span>`;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Submit Pengajuan 2027</span>`;
+        lucide.createIcons();
 
         if(result.status === "SUCCESS") {
-          document.getElementById('linkDownloadPdf').href = result.pdfUrl;
           document.getElementById('modalSuccess').classList.remove('hidden');
         } else {
           alert("Gagal melakukan submit: " + result.message);
         }
       } catch(err) {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Submit Pengajuan 2027</span>`;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Submit Pengajuan 2027</span>`;
+        lucide.createIcons();
         alert("Terjadi kesalahan jaringan saat mengirim data ke GAS.");
       }
     }
@@ -568,6 +683,7 @@
       guruList = [];
       document.getElementById('viewDashboard').classList.add('hidden');
       document.getElementById('userInfo').classList.add('hidden');
+      document.getElementById('userInfo').classList.remove('flex');
       document.getElementById('viewLogin').classList.remove('hidden');
     }
   </script>
